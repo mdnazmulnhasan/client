@@ -1,19 +1,18 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 
-import { GoogleAuthProvider,createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { GoogleAuthProvider,createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import auth from "../firebase/firebase.config";
 
-import usePublicAxios from "../hooks/usePublicAxios";
+
 
 
 export const AuthContext = createContext(null)
 const AuthProvider = ({children}) => {
 
 
-const axiosPublic = usePublicAxios()
     const [user, setUser] = useState({})
-    const [loader, setLoader] = useState(true)
+  
     const googleProvider = new GoogleAuthProvider()
 
 
@@ -22,10 +21,7 @@ const axiosPublic = usePublicAxios()
         return signInWithPopup(auth, googleProvider)
      }
      
-  
-     const resetPassword = (email)=> {
-return sendPasswordResetEmail(auth, email)
-     }
+
 
     //  email and password base authantication
 
@@ -46,16 +42,19 @@ return sendPasswordResetEmail(auth, email)
     }
     const logOut = ()=>{
 
-       axiosPublic.get('/logout')
-        return signOut(auth)
+  
+     return signOut(auth)
     }
 
     
 useEffect(()=>{
 
 const unSubscribe  = onAuthStateChanged(auth, (currentUser)=>{
-    setLoader(false)
-    setUser(currentUser)
+
+  
+
+        setUser(currentUser)
+    
     
 
 
@@ -67,7 +66,7 @@ return ()=> unSubscribe()
 },[])
 
 
-     const authInfo = { loginWithGoogle,   resetPassword , registar, login, logOut, updateUser, user, loader}
+     const authInfo = { loginWithGoogle,  registar, login, logOut, updateUser, user}
 
 
     return (
