@@ -50,7 +50,7 @@ const logOutHandle= ()=>{
       </ul>
     </div>
     <a className="btn font-bold md:text-3xl btn-ghost text-xl ">
-  Akhyan<span className="text-[#aa1936]">-আখ্যান</span>
+    Book <span className="text-[#aa1936]">Beacon</span>
 </a>
   </div>
   <div className="navbar-center hidden lg:flex">
