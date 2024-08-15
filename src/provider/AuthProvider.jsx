@@ -56,44 +56,7 @@ useEffect(()=>{
 const unSubscribe  = onAuthStateChanged(auth, (currentUser)=>{
     setLoader(false)
     setUser(currentUser)
-    if(currentUser){
-
-  
-
-
-
-
-
-        const userName = currentUser.displayName;
-        const  userEmail= currentUser.email;
-       const  userPhoto= currentUser.photoURL;
-       const userRole= "user";
-     const userInfo = {
-        userName,
-        userEmail,
-        userPhoto,
-        userRole
-     }
-
-
-
-.then(result => {
-    console.log(result);
-})
-.catch(err => { 
-    console.log(err);
-});
-
-
-     axiosPublic.post('/saveUser', userInfo)
-     .then(result => console.log(result))
-     .catch(error =>{
-
-        console.log(error);
-     })
-
-     
-    }
+    
 
 
 
