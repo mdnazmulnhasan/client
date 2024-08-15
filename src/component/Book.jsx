@@ -3,7 +3,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Book = ({ book }) => {
-    const { image, title, author, price, category } = book;
+    const { image, title, author, price, category,
+        publicationDate } = book;
 
     const handleAddToCart = () => {
         toast.info('This Feature coming soon!', {
@@ -51,6 +52,16 @@ const Book = ({ book }) => {
                     <span className="text-gray-900 font-semibold">Author: </span>
                     {author}
                 </div>
+
+                <div className="text-center mb-2">
+                    <span className="text-gray-900 font-semibold">Published: </span>
+                    {new Date(publicationDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    })}
+                </div>
+
                 <div className="mt-2 text-center">
                     <span className="text-gray-900 font-semibold">Price: </span>
                     <span className="text-lg text-gray-500">${price}</span>
