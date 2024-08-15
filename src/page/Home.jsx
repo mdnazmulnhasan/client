@@ -1,9 +1,10 @@
+import Books from "../component/Books";
 
 
 const Home = () => {
     return (
         <div>
-           THis is home 
+          <Books/>
         </div>
     );
 };
