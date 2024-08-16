@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import usePublicAxios from "../hooks/usePublicAxios";
 import { useQuery } from "@tanstack/react-query";
 import Book from "./Book";
@@ -13,19 +13,42 @@ const Books = () => {
     const [category, setCategory] = useState("");
     const [sort, setSort] = useState("");
     const [count, setCount] = useState(0);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [publication, setPublication] = useState("");
     const [priceRange, setPriceRange] = useState([0, 3000]);
 
-    const toggleFilter = () => setIsOpen(!isOpen);
+    const [filters, setFilters] = useState({
+      
 
-    const handleFind = () => {
-        console.log("Selected Publication:", publication);
-        console.log("Selected Category:", category);
-        console.log("Selected Price Range:", priceRange);
-        setIsOpen(false); // Close the modal after applying the filter
-        refetch()
-    
+
+        category: "",
+        publication: "",
+        priceRange: [0, 3000],
+    });
+
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+    const { isLoading: countLoading, refetch: countRefetch } = useQuery({
+        queryKey: ['totalBooksCount', filters],
+        queryFn: async () => {
+            const { data } = await axiosPublic.get(`/countBooks?search=${search}&category=${filters.category}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&publication=${filters.publication}`);
+            setCount(data?.count);
+            return data?.count;
+        },
+        enabled: false,  // This ensures the query is not run automatically
+    });
+
+    const handleApplyFilters = () => {
+        setFilters({
+          
+            
+            category,
+            publication,
+            priceRange,
+        });
+        setIsSidebarOpen(false);
+        setCurrentPage(1);
+        countRefetch();
     };
 
     const handlePriceChange = (e) => {
@@ -37,19 +60,13 @@ const Books = () => {
         }
     };
 
-    const { isLoading: countLoading } = useQuery({
-        queryKey: ['totalBooksCount', search, category, priceRange],
-        queryFn: async () => {
-            const { data } = await axiosPublic.get(`/countBooks?search=${search}&category=${category}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`);
-            setCount(data?.count);
-        }
-    });
-
     const searchHandle = (e) => {
         e.preventDefault();
-        const search = e.target.search.value;
-        setSearch(search);
+        const searchValue = e.target.search.value;
+        setSearch(searchValue);
         setCurrentPage(1);
+
+
     };
 
     const sortHandle = (e) => {
@@ -63,180 +80,194 @@ const Books = () => {
     const skip = limit * (currentPage - 1);
 
     const { data: allBooks = [], isLoading, refetch } = useQuery({
-        queryKey: ["books", currentPage, limit, search, category, sort, priceRange,handleFind],
+        queryKey: ["books", currentPage, limit, search, sort, filters],
         queryFn: async () => {
-            const { data } = await axiosPublic.get(`/books?skip=${skip}&limit=${limit}&search=${search}&sort=${sort}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&publication=${publication}`);
+
+            const { data } = await axiosPublic.get(`/books?skip=${skip}&limit=${limit}&search=${search}&sort=${sort}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&publication=${filters.publication}&category=${filters.category}`);
             return data;
         },
         keepPreviousData: true,
     });
+
+    useEffect(() => {
+        // Fetch count when filters change
+        if (filters) {
+            countRefetch();
+        }
+    }, [filters, countRefetch]);
+
+    useEffect(() => {
+        refetch();
+    }, [
+        
+        sort, currentPage, limit, refetch]);
 
     if (isLoading || countLoading) {
         return <p>Loading...</p>;
     }
 
     return (
-        <div className="mt-16">
-            <div className="flex flex-col md:flex-row justify-center items-center mb-8 space-y-4 md:space-y-0 md:space-x-4">
-                <div className="flex items-center">
-                    <label htmlFor="category-select" className="mr-2">Category:</label>
+        <div className="relative mt-16 flex">
+            {/* Sidebar */}
+            <div className={`fixed inset-0 bg-gray-800 bg-opacity-50 z-40 ${isSidebarOpen ? "block" : "hidden"}`} onClick={toggleSidebar}></div>
+            <div className={`fixed top-0 right-0 h-full w-64 bg-gray-100 p-6 shadow-lg transform ${isSidebarOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out z-50 overflow-y-auto`}>
+                <button
+                    onClick={toggleSidebar}
+                    className="absolute top-2 left-2 text-gray-600 hover:text-gray-900"
+                >
+                    <FaTimes size={20} />
+                </button>
+
+                <h2 className="text-xl font-semibold mb-4">Filter Options</h2>
+
+                <div className="mb-4">
+                    <label htmlFor="publication-select" className="block font-semibold mb-2">Publication:</label>
                     <select
-                        id="category-select"
-                        name="select"
-                        value={sort}
-                        onChange={sortHandle}
-                        className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+                        id="publication-select"
+                        value={publication}
+                        onChange={(e) => setPublication(e.target.value)}
+                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
                     >
-                        <option value="">Default</option>
-                        <option value="priceLow">Price High to Low</option>
-                        <option value="priceHigh">Price Low to High</option>
-                        <option value="newestDate">Newest first</option>
-                        <option value="oldestDate">Oldest first</option>
+                        <option value="">Select Publication</option>
+                        <option value="Penguin">Penguin</option>
+                        <option value="HarperCollins">HarperCollins</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Orion">Orion</option>
                     </select>
                 </div>
 
-                <form onSubmit={searchHandle} className="flex items-center border border-gray-300 rounded-lg bg-white">
-                    <input
-                        type="text"
-                        name="search"
-                        placeholder="Search books..."
-                        className="px-4 py-2 md:w-80 rounded-l-lg focus:outline-none"
-                    />
-                    <button
-                        type="submit"
-                        className="px-4 py-4 bg-[#aa1936] text-white rounded-r-lg flex items-center justify-center"
+                <div className="mb-4">
+                    <label htmlFor="category-select" className="block font-semibold mb-2">Category:</label>
+                    <select
+                        id="category-select"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
                     >
-                        <FaSearch />
-                    </button>
-                </form>
+                        <option value="">Select Category</option>
+                        <option value="Novel">Novel</option>
+                        <option value="Self-Help">Self-Help</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Business">Business</option>
+                        <option value="Strategy">Strategy</option>
+                        <option value="Biography">Biography</option>
+                    </select>
+                </div>
 
-                <div className="relative">
+                <div className="mb-4">
+                    <label htmlFor="min-price" className="block font-semibold mb-2">Min Price:</label>
+                    <input
+                        id="min-price"
+                        type="number"
+                        name="minPrice"
+                        min="0"
+                        max={priceRange[1]}
+                        value={priceRange[0]}
+                        onChange={handlePriceChange}
+                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="max-price" className="block font-semibold mb-2">Max Price:</label>
+                    <input
+                        id="max-price"
+                        type="number"
+                        name="maxPrice"
+                        min={priceRange[0]}
+                        max="3000"
+                        value={priceRange[1]}
+                        onChange={handlePriceChange}
+                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
+                    />
+                </div>
+
+                <button
+                    onClick={handleApplyFilters}
+                    className="w-full px-4 py-2 bg-[#aa1936] hover:bg-red-700 text-white font-bold rounded-lg shadow-lg focus:outline-none"
+                >
+                    Apply Filters
+                </button>
+            </div>
+
+            {/* Main content */}
+            <div className={`flex-1 p-6 ${isSidebarOpen ? "overflow-hidden" : "overflow-auto"}`}>
+                <div className="flex flex-col md:flex-row justify-around items-center mb-8 space-y-4 md:space-y-0 md:space-x-4">
+                    <div className="flex items-center">
+                        <label htmlFor="sort-select" className="mr-2">Sort By:</label>
+                        <select
+                            id="sort-select"
+                            name="sort"
+                            value={sort}
+                            onChange={sortHandle}
+                            className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+                        >
+                            <option value="">Default</option>
+                            <option value="priceLow">Price Low to High</option>
+                            <option value="priceHigh">Price High to Low</option>
+                            <option value="newestDate">Newest first</option>
+                            <option value="oldestDate">Oldest first</option>
+                        </select>
+                    </div>
+
+                    <form onSubmit={searchHandle} className="flex items-center border border-gray-300 rounded-lg bg-white">
+                    <input
+    type="text"
+    name="search"
+    placeholder="Search Books"
+    defaultValue={search}
+    className="p-2 border-none outline-none w-full rounded-lg  transition-colors"
+/>
+                        <button
+                            type="submit"
+                            className="px-2 py-4 border-none bg-[#aa1936] text-white rounded-r-lg hover:bg-red-700"
+                        >
+                            <FaSearch />
+                        </button>
+                    </form>
+
                     <button
-                        onClick={toggleFilter}
-                        className="flex items-center px-4 py-2 bg-[#aa1936] text-white rounded-lg shadow-md focus:outline-none"
+                        onClick={toggleSidebar}
+                        className="flex items-center p-2 bg-[#aa1936] hover:bg-red-700 text-white rounded-lg"
                     >
                         <FaFilter className="mr-2" />
-                        Filter
+                        Filters
                     </button>
-
-                    {isOpen && (
-                        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-                            <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg relative">
-                                <button
-                                    onClick={toggleFilter}
-                                    className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
-                                >
-                                    <FaTimes size={20} />
-                                </button>
-
-                                <h2 className="text-xl font-semibold mb-4">Filter Options</h2>
-
-                                <div className="mb-4">
-                                    <label htmlFor="publication-select" className="block font-semibold mb-2">Publication:</label>
-                                    <select
-                                        id="publication-select"
-                                        value={publication}
-                                        onChange={(e) => setPublication(e.target.value)}
-                                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                                    >
-                                        <option value="">Select Publication</option>
-                                        <option value="Penguin">Penguin</option>
-                                        <option value="HarperCollins">HarperCollins</option>
-                                        <option value="Vintage">Vintage</option>
-                                        <option value="Orion">Orion</option>
-                                      
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label htmlFor="category-select" className="block font-semibold mb-2">Category:</label>
-                                    <select
-                                        id="category-select"
-                                        value={category}
-                                        onChange={(e) => setCategory(e.target.value)}
-                                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                                    >
-                                        <option value="">Select Category</option>
-                                        <option value="Category 1">Category 1</option>
-                                        <option value="Category 2">Category 2</option>
-                                        <option value="Category 3">Category 3</option>
-                                        <option value="Category 4">Category 4</option>
-                                        <option value="Category 5">Category 5</option>
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label htmlFor="min-price" className="block font-semibold mb-2">Min Price:</label>
-                                    <input
-                                        id="min-price"
-                                        type="number"
-                                        name="minPrice"
-                                        min="0"
-                                        max={priceRange[1]}
-                                        value={priceRange[0]}
-                                        onChange={handlePriceChange}
-                                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                                    />
-                                </div>
-
-                                <div className="mb-4">
-                                    <label htmlFor="max-price" className="block font-semibold mb-2">Max Price:</label>
-                                    <input
-                                        id="max-price"
-                                        type="number"
-                                        name="maxPrice"
-                                        min={priceRange[0]}
-                                        max="3000"
-                                        value={priceRange[1]}
-                                        onChange={handlePriceChange}
-                                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                                    />
-                                </div>
-
-                                <button
-                                    onClick={handleFind}
-                                    className="w-full px-4 py-2 bg-[#aa1936] hover:bg-red-700 text-white font-bold rounded-lg shadow-lg focus:outline-none"
-                                >
-                                    Apply Filters
-                                </button>
-                            </div>
-                        </div>
-                    )}
                 </div>
-            </div>
 
-            <div className="grid mt-16 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {allBooks.length > 0 ? (
-                    allBooks.map(book => <Book key={book._id} book={book} />)
-                ) : (
-                    <p>No books found.</p>
-                )}
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-6">
+                    {allBooks.map((book) => (
+                        <Book key={book._id} book={book} />
+                    ))}
+                </div>
 
-            <div className="join flex justify-center items-center mx-auto mt-4">
+                <div className="join flex justify-center items-center mx-auto mt-4">
                 <button
                     disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((old) => Math.max(old - 1, 1))}
-                    className="px-4 py-2 bg-[#aa1936] text-white rounded-l-lg"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className="join-item btn btn-outline"
                 >
-                    Prev
+                    Previous page
                 </button>
-                {Array.from({ length: pagesNumber }, (_, index) => (
+
+                {Array.from({ length: pagesNumber }, (_, idx) => (
                     <button
-                        key={index}
-                        onClick={() => setCurrentPage(index + 1)}
-                        className={`px-4 py-2 ${currentPage === index + 1 ? "bg-[#aa1936] text-white" : "bg-white text-[#aa1936]"} border border-[#aa1936]`}
+                        key={idx}
+                        onClick={() => setCurrentPage(idx + 1)}
+                        className={idx + 1 === currentPage ? "join-item btn bg-[#aa1936] hover:bg-[#aa1936] text-white" : "join-item btn hover:bg-[#aa1936] hover:text-white"}
                     >
-                        {index + 1}
+                        {idx + 1}
                     </button>
                 ))}
+
                 <button
                     disabled={currentPage === pagesNumber}
-                    onClick={() => setCurrentPage((old) => Math.min(old + 1, pagesNumber))}
-                    className="px-4 py-2 bg-[#aa1936] text-white rounded-r-lg"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className="join-item btn btn-outline"
                 >
                     Next
                 </button>
+            </div>
             </div>
         </div>
     );
