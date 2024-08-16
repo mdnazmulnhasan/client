@@ -24,6 +24,8 @@ const Books = () => {
         console.log("Selected Category:", category);
         console.log("Selected Price Range:", priceRange);
         setIsOpen(false); // Close the modal after applying the filter
+        refetch()
+    
     };
 
     const handlePriceChange = (e) => {
@@ -60,10 +62,10 @@ const Books = () => {
     const pagesNumber = !countLoading && Math.ceil(totalBooksLength / limit);
     const skip = limit * (currentPage - 1);
 
-    const { data: allBooks = [], isLoading } = useQuery({
-        queryKey: ["books", currentPage, limit, search, category, sort, priceRange],
+    const { data: allBooks = [], isLoading, refetch } = useQuery({
+        queryKey: ["books", currentPage, limit, search, category, sort, priceRange,handleFind],
         queryFn: async () => {
-            const { data } = await axiosPublic.get(`/books?skip=${skip}&limit=${limit}&search=${search}&sort=${sort}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}`);
+            const { data } = await axiosPublic.get(`/books?skip=${skip}&limit=${limit}&search=${search}&sort=${sort}&minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}&publication=${publication}`);
             return data;
         },
         keepPreviousData: true,
@@ -138,11 +140,11 @@ const Books = () => {
                                         className="p-2 border border-gray-300 rounded-lg bg-white w-full"
                                     >
                                         <option value="">Select Publication</option>
-                                        <option value="Publication 1">Publication 1</option>
-                                        <option value="Publication 2">Publication 2</option>
-                                        <option value="Publication 3">Publication 3</option>
-                                        <option value="Publication 4">Publication 4</option>
-                                        <option value="Publication 5">Publication 5</option>
+                                        <option value="Penguin">Penguin</option>
+                                        <option value="HarperCollins">HarperCollins</option>
+                                        <option value="Vintage">Vintage</option>
+                                        <option value="Orion">Orion</option>
+                                      
                                     </select>
                                 </div>
 

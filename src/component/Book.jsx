@@ -3,8 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Book = ({ book }) => {
-    const { image, title, author, price, category,
-        publicationDate } = book;
+    const { image, title, author, price, category, publicationDate, publication } = book;
 
     const handleAddToCart = () => {
         toast.info('This Feature coming soon!', {
@@ -52,6 +51,10 @@ const Book = ({ book }) => {
                     <span className="text-gray-900 font-semibold">Author: </span>
                     {author}
                 </div>
+                <div className="text-gray-700 text-center mb-2">
+                    <span className="text-gray-900 font-semibold">Publication: </span>
+                    {publication}
+                </div>
 
                 <div className="text-center mb-2">
                     <span className="text-gray-900 font-semibold">Published: </span>
@@ -93,6 +96,9 @@ Book.propTypes = {
         author: PropTypes.string.isRequired,
         price: PropTypes.number.isRequired,
         category: PropTypes.string.isRequired,
+        publication:PropTypes.string.isRequired,
+        publicationDate:PropTypes.string.isRequired,
+
     }).isRequired,
 };
 
