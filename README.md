@@ -1,6 +1,7 @@
-# [Book Beacon]
+# Book Beacon
 
 [Live Link](https://book-beacon-188a6.web.app/)
+
 [Server side repo link](https://github.com/rakib3719/book-beacon-server-side)
 
 
@@ -30,23 +31,27 @@ Make sure you have the following installed:
 1. **Clone the repository:**
 
    ```bash
-   --git clone https://github.com/rakib3719/book-beacon-client-side
-   --cd book-beacon-client-side
-   --npm install
-   --npm run dev
-   --Open http://localhost:3000 in your browser to view the application.
+   git clone https://github.com/rakib3719/book-beacon-client-side
+   cd book-beacon-client-side
+   npm install
+   npm run dev
+
 
    
 2. **Usage:**
 
---Navigate through the bookshop and use the filter options to narrow down your search.
---Use the search bar to find specific books.
+- Open http://localhost:3000 in your browser to view the application.
+
+- Navigate through the bookshop and use the filter options to narrow down your search.
+
+- Use the search bar to find specific books.
 
 3. **Technologies Used:**
 
---React
---React Router
---Axios
---TanStack Query
---CSS
+- React
+- React Router
+- Axios
+- TanStack Query
+- CSS
+
 
