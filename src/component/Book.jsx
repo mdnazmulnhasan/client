@@ -54,7 +54,7 @@ const Book = ({ book }) => {
             <img className="w-full h-[250px] object-cover border-[#126456] border-2" src={image} alt={title} />
 
             <div title='Discount is coming soon' className="absolute top-0 left-0 bg-red-600 text-white px-3 py-1 text-sm font-bold rounded-br-lg transform  shadow-lg">
-              {publication} publication
+                {publication} publication
             </div>
 
             <div className='bg-[#126456] flex justify-between font-work-sense px-4 py-2 text-white'>

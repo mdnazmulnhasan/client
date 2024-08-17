@@ -9,14 +9,14 @@ const Main = () => {
     return (
         <div>
 
-<div className="  md:w-[94%] max-w-[1400px] mx-auto">
-       
-       <Navbar/>
-<Outlet></Outlet>
+            <div className="  md:w-[94%] max-w-[1400px] mx-auto">
 
-        </div>
+                <Navbar />
+                <Outlet></Outlet>
 
-        <Footer/>
+            </div>
+
+            <Footer />
         </div>
     );
 };

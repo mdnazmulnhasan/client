@@ -1,7 +1,7 @@
 
 import Modal from 'react-modal';
 
-import { FcGoogle } from 'react-icons/fc'; 
+import { FcGoogle } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthProvider';
 import { ToastContainer, toast } from 'react-toastify';
@@ -24,17 +24,17 @@ const customStyles = {
 
 const LoginPage = () => {
   const [logLoader, setLogLoader] = useState(false);
-  const { login,  resetPassword, loginWithGoogle  } = useContext(AuthContext);
+  const { login, resetPassword, loginWithGoogle } = useContext(AuthContext);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const googleLogin = async()=> {
-try{
+  const googleLogin = async () => {
+    try {
 
-  await loginWithGoogle()
-  toast.success("Login Success")
+      await loginWithGoogle()
+      toast.success("Login Success")
 
-}catch(err){
-  toast.error(err.message)
-}
+    } catch (err) {
+      toast.error(err.message)
+    }
   }
 
   const loginHandle = async (e) => {
@@ -64,16 +64,16 @@ try{
   const handleResetPassword = async e => {
     e.preventDefault();
     const email = e.target.email.value;
-try{
+    try {
 
-await resetPassword(email)
-toast.success(`Password reset link sent to ${email}`);
-closeModal();
+      await resetPassword(email)
+      toast.success(`Password reset link sent to ${email}`);
+      closeModal();
 
-}catch(err){
-  toast.error(err.message)
-}
-   
+    } catch (err) {
+      toast.error(err.message)
+    }
+
   };
 
   return (
@@ -159,7 +159,7 @@ closeModal();
           </p>
         </div>
 
-        <div onClick={ googleLogin} className="mt-4 flex justify-center items-center space-x-2 border-2 p-2 hover:bg-gray-200">
+        <div onClick={googleLogin} className="mt-4 flex justify-center items-center space-x-2 border-2 p-2 hover:bg-gray-200">
           <FcGoogle size={28} />
           <span className="text-sm font-medium text-gray-900">Login in with Google</span>
         </div>

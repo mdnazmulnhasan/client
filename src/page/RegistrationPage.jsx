@@ -13,77 +13,77 @@ const RegistrationPage = () => {
   const handleFileChange = (event) => {
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
   };
-  const  {registar, updateUser, loginWithGoogle} = useContext(AuthContext)
-const [regloader, setRegloader] = useState(false)
+  const { registar, updateUser, loginWithGoogle } = useContext(AuthContext)
+  const [regloader, setRegloader] = useState(false)
 
-const googleLogin = async()=> {
-  try{
-  
-    await loginWithGoogle()
-    toast.success("Login Success")
-  
-  }catch(err){
-    toast.error(err.message)
-  }
+  const googleLogin = async () => {
+    try {
+
+      await loginWithGoogle()
+      toast.success("Login Success")
+
+    } catch (err) {
+      toast.error(err.message)
     }
+  }
 
-  const registarHandle =async e =>{
+  const registarHandle = async e => {
     setRegloader(true)
 
-e.preventDefault()
+    e.preventDefault()
 
-const form = e.target;
-const name = form.name.value;
-const email = form.email.value;
-const password = form.password.value;
-const confirmPassword = form.confirmPassword.value;
-const photo = form.photo.files[0] 
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+    const photo = form.photo.files[0]
 
 
 
-if(password.length < 6){
-  toast.error("Password should be at least 6 characters");
-setRegloader(false)
-  return
+    if (password.length < 6) {
+      toast.error("Password should be at least 6 characters");
+      setRegloader(false)
+      return
     }
 
-    if(password !== confirmPassword){
+    if (password !== confirmPassword) {
       toast.error('Confirm password did not match')
       setRegloader(false)
       return
     }
 
 
-try{
+    try {
 
-  let image_url = null;
- if(photo){
- image_url = await imageUpload(photo)
- }
+      let image_url = null;
+      if (photo) {
+        image_url = await imageUpload(photo)
+      }
 
-  //2. User Registration
-  const result = await registar(email, password)
-  console.log(result)
+      //2. User Registration
+      const result = await registar(email, password)
+      console.log(result)
 
-  // 3. Save username and photo in firebase
-  if (image_url) {
-    await updateUser(name, image_url);
-  } else {
-    await updateUser(name); // No photo provided, only update name
+      // 3. Save username and photo in firebase
+      if (image_url) {
+        await updateUser(name, image_url);
+      } else {
+        await updateUser(name); // No photo provided, only update name
+      }
+
+
+      setRegloader(false)
+      toast.success('Regestration Sucessfully')
+
+
+    } catch (err) {
+      toast.error(err.message)
+      setRegloader(false)
+    }
+
+
   }
-
-
-  setRegloader(false)
-toast.success('Regestration Sucessfully')
-
-
-}catch(err){
-toast.error(err.message)
-setRegloader(false)
-}
-
-
-}
   return (
     <div className="min-h-screen mt-8 flex items-center justify-center bg-gray-100">
       <ToastContainer></ToastContainer>
@@ -144,7 +144,7 @@ setRegloader(false)
               />
             </div>
           </div>
-          
+
           <div>
             <label htmlFor="photo-upload" className="block text-sm font-medium text-gray-700">Upload Photo</label>
             <input
@@ -168,7 +168,7 @@ setRegloader(false)
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#aa1936] hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-          {  regloader? "Loading...":  "Register"}
+              {regloader ? "Loading..." : "Register"}
             </button>
           </div>
         </form>
@@ -176,7 +176,7 @@ setRegloader(false)
           <p className="mt-2 text-sm text-gray-600">
             Already have an account?{' '}
             <Link to={'/login'} className="font-medium text-indigo-600 hover:text-indigo-500">
-            Log in
+              Log in
             </Link>
           </p>
         </div>

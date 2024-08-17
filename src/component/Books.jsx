@@ -19,13 +19,13 @@ const Books = () => {
     const [priceRange, setPriceRange] = useState([0, 3000]);
 
     const [filters, setFilters] = useState({
-      
+
 
 
         category: "",
         publication: "",
         priceRange: [0, 3000],
-       
+
     });
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -42,8 +42,8 @@ const Books = () => {
 
     const handleApplyFilters = () => {
         setFilters({
-          
-            
+
+
             category,
             publication,
             priceRange,
@@ -102,21 +102,21 @@ const Books = () => {
     useEffect(() => {
         refetch();
     }, [
-        
+
         sort, currentPage, limit, refetch]);
 
     if (isLoading || countLoading) {
-        return  <div className="flex justify-center items-center mt-8 mb-16">
+        return <div className="flex justify-center items-center mt-8 mb-16">
 
-<ColorRing
-        visible={true}
-        height="80"
-        width="80"
-        ariaLabel="color-ring-loading"
-        wrapperStyle={{}}
-        wrapperClass="color-ring-wrapper"
-        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
-        />
+            <ColorRing
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="color-ring-loading"
+                wrapperStyle={{}}
+                wrapperClass="color-ring-wrapper"
+                colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+            />
         </div>;
     }
 
@@ -171,32 +171,32 @@ const Books = () => {
                 </div>
 
                 <div className="mb-4">
-    <label htmlFor="price-range" className="block font-semibold mb-2">Price Range:</label>
-    <div className="flex justify-between">
-        <span>${priceRange[0]}</span>
-        <span>${priceRange[1]}</span>
-    </div>
-    <input
-        id="price-range"
-        type="range"
-        min="0"
-        max="3000"
-        value={priceRange[0]}
-        onChange={(e) => setPriceRange([parseFloat(e.target.value), priceRange[1]])}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-    />
-    <input
-        type="range"
-        min="0"
-        max="3000"
-        value={priceRange[1]}
-        onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-    />
-</div>
+                    <label htmlFor="price-range" className="block font-semibold mb-2">Price Range:</label>
+                    <div className="flex justify-between">
+                        <span>${priceRange[0]}</span>
+                        <span>${priceRange[1]}</span>
+                    </div>
+                    <input
+                        id="price-range"
+                        type="range"
+                        min="0"
+                        max="3000"
+                        value={priceRange[0]}
+                        onChange={(e) => setPriceRange([parseFloat(e.target.value), priceRange[1]])}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <input
+                        type="range"
+                        min="0"
+                        max="3000"
+                        value={priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                </div>
 
 
-              
+
 
                 <button
                     onClick={handleApplyFilters}
@@ -227,13 +227,13 @@ const Books = () => {
                     </div>
 
                     <form onSubmit={searchHandle} className="flex items-center border border-gray-300 rounded-lg bg-white">
-                    <input
-    type="text"
-    name="search"
-    placeholder="Search Books"
-    defaultValue={search}
-    className="p-2 border-none outline-none w-full rounded-lg  transition-colors"
-/>
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Search Books"
+                            defaultValue={search}
+                            className="p-2 border-none outline-none w-full rounded-lg  transition-colors"
+                        />
                         <button
                             type="submit"
                             className="px-2 py-4 border-none bg-[#aa1936] text-white rounded-r-lg hover:bg-red-700"
@@ -258,32 +258,32 @@ const Books = () => {
                 </div>
 
                 <div className="join flex justify-center items-center mx-auto mt-4">
-                <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className="join-item btn btn-outline"
-                >
-                    Previous page
-                </button>
-
-                {Array.from({ length: pagesNumber }, (_, idx) => (
                     <button
-                        key={idx}
-                        onClick={() => setCurrentPage(idx + 1)}
-                        className={idx + 1 === currentPage ? "join-item btn bg-[#aa1936] hover:bg-[#aa1936] text-white" : "join-item btn hover:bg-[#aa1936] hover:text-white"}
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        className="join-item btn btn-outline"
                     >
-                        {idx + 1}
+                        Previous page
                     </button>
-                ))}
 
-                <button
-                    disabled={currentPage === pagesNumber}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="join-item btn btn-outline"
-                >
-                    Next
-                </button>
-            </div>
+                    {Array.from({ length: pagesNumber }, (_, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setCurrentPage(idx + 1)}
+                            className={idx + 1 === currentPage ? "join-item btn bg-[#aa1936] hover:bg-[#aa1936] text-white" : "join-item btn hover:bg-[#aa1936] hover:text-white"}
+                        >
+                            {idx + 1}
+                        </button>
+                    ))}
+
+                    <button
+                        disabled={currentPage === pagesNumber}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        className="join-item btn btn-outline"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );
