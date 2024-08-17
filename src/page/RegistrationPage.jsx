@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { AuthContext } from '../provider/AuthProvider';
 import { imageUpload } from '../utilites/photoUpload';
 
+
 const RegistrationPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -36,7 +37,7 @@ const name = form.name.value;
 const email = form.email.value;
 const password = form.password.value;
 const confirmPassword = form.confirmPassword.value;
-const photo = form.photo.files[0]
+const photo = form.photo.files[0] 
 
 
 
@@ -55,14 +56,23 @@ setRegloader(false)
 
 try{
 
-  const image_url = await imageUpload(photo)
-  console.log(image_url)
+  let image_url = null;
+ if(photo){
+ image_url = await imageUpload(photo)
+ }
+
   //2. User Registration
   const result = await registar(email, password)
   console.log(result)
 
   // 3. Save username and photo in firebase
-  await updateUser(name, image_url)
+  if (image_url) {
+    await updateUser(name, image_url);
+  } else {
+    await updateUser(name); // No photo provided, only update name
+  }
+
+
   setRegloader(false)
 toast.success('Regestration Sucessfully')
 

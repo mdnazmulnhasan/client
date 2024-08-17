@@ -2,8 +2,7 @@
 import { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
-import { signOut } from "firebase/auth";
-import auth from "../firebase/firebase.config";
+
 
 
 
@@ -29,17 +28,17 @@ const logOutHandle= ()=>{
   const nav = <>
   
   <li className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 "><NavLink to={'/'}>Home</NavLink></li>
-  <li className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 "><NavLink to={'mycart'}>My Cart</NavLink></li>
+  <li className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 "><NavLink to={'/mycart'}>My Cart</NavLink></li>
+  <li className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 "><NavLink to={'/reviews'}>Book Reviews</NavLink></li>
  
 
 
-  <li  className="px-3 sm:hidden py-2 rounded-md text-sm font-medium text-gray-700 ml-3">Log Out</li>
-       
+
     
   </>
 
     return (
-        <div className="navbar bg-base-100 max-w-[1400px] mx-auto">
+        <div className="navbar ml-4 bg-base-100 ">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">

@@ -3,6 +3,7 @@ import usePublicAxios from "../hooks/usePublicAxios";
 import { useQuery } from "@tanstack/react-query";
 import Book from "./Book";
 import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
+import { ColorRing } from "react-loader-spinner";
 
 const Books = () => {
     const axiosPublic = usePublicAxios();
@@ -24,6 +25,7 @@ const Books = () => {
         category: "",
         publication: "",
         priceRange: [0, 3000],
+       
     });
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -58,6 +60,7 @@ const Books = () => {
         } else if (name === "maxPrice") {
             setPriceRange([priceRange[0], Math.min(parseFloat(value), 3000)]);
         }
+        currentPage(1)
     };
 
     const searchHandle = (e) => {
@@ -103,7 +106,18 @@ const Books = () => {
         sort, currentPage, limit, refetch]);
 
     if (isLoading || countLoading) {
-        return <p>Loading...</p>;
+        return  <div className="flex justify-center items-center mt-8 mb-16">
+
+<ColorRing
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="color-ring-loading"
+        wrapperStyle={{}}
+        wrapperClass="color-ring-wrapper"
+        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+        />
+        </div>;
     }
 
     return (
@@ -151,36 +165,38 @@ const Books = () => {
                         <option value="Business">Business</option>
                         <option value="Strategy">Strategy</option>
                         <option value="Biography">Biography</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Fantasy">Fantasy</option>
                     </select>
                 </div>
 
                 <div className="mb-4">
-                    <label htmlFor="min-price" className="block font-semibold mb-2">Min Price:</label>
-                    <input
-                        id="min-price"
-                        type="number"
-                        name="minPrice"
-                        min="0"
-                        max={priceRange[1]}
-                        value={priceRange[0]}
-                        onChange={handlePriceChange}
-                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                    />
-                </div>
+    <label htmlFor="price-range" className="block font-semibold mb-2">Price Range:</label>
+    <div className="flex justify-between">
+        <span>${priceRange[0]}</span>
+        <span>${priceRange[1]}</span>
+    </div>
+    <input
+        id="price-range"
+        type="range"
+        min="0"
+        max="3000"
+        value={priceRange[0]}
+        onChange={(e) => setPriceRange([parseFloat(e.target.value), priceRange[1]])}
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+    />
+    <input
+        type="range"
+        min="0"
+        max="3000"
+        value={priceRange[1]}
+        onChange={(e) => setPriceRange([priceRange[0], parseFloat(e.target.value)])}
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+    />
+</div>
 
-                <div className="mb-4">
-                    <label htmlFor="max-price" className="block font-semibold mb-2">Max Price:</label>
-                    <input
-                        id="max-price"
-                        type="number"
-                        name="maxPrice"
-                        min={priceRange[0]}
-                        max="3000"
-                        value={priceRange[1]}
-                        onChange={handlePriceChange}
-                        className="p-2 border border-gray-300 rounded-lg bg-white w-full"
-                    />
-                </div>
+
+              
 
                 <button
                     onClick={handleApplyFilters}
@@ -194,7 +210,7 @@ const Books = () => {
             <div className={`flex-1 p-6 ${isSidebarOpen ? "overflow-hidden" : "overflow-auto"}`}>
                 <div className="flex flex-col md:flex-row justify-around items-center mb-8 space-y-4 md:space-y-0 md:space-x-4">
                     <div className="flex items-center">
-                        <label htmlFor="sort-select" className="mr-2">Sort By:</label>
+                        <label htmlFor="sort-select" className="w-24">Sort By:</label>
                         <select
                             id="sort-select"
                             name="sort"
